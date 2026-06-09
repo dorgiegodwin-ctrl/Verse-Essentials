@@ -1,0 +1,8 @@
+GetInventoryComp <public> (Player : player)<transacts><decides>:inventory_component =
+    Inventory := (for (I : Player.FindDescendantComponents(inventory_component)){ I })[0]
+
+GetHotbarComp <public> (Player : player)<transacts><decides>:fort_inventory_weapon_hotbar_component =
+    Inventory := (for (I : Player.FindDescendantComponents(fort_inventory_weapon_hotbar_component)){ I })[0]
+
+GetHarvestComp <public> (Player : player)<transacts><decides>:fort_inventory_harvest_tool_component =
+    Inventory := (for (I : Player.FindDescendantComponents(fort_inventory_harvest_tool_component)){ I })[0]
