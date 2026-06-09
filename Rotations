@@ -1,0 +1,16 @@
+(Rotation : (/Verse.org/SpatialMath:)rotation).Yaw() : float =
+    Rotation.GetYawPitchRollDegrees()(0)
+
+(Rotation : (/Verse.org/SpatialMath:)rotation).Pitch() : float =
+    Rotation.GetYawPitchRollDegrees()(1)
+
+(Rotation : (/Verse.org/SpatialMath:)rotation).Roll() : float =
+    Rotation.(/Verse.org/SpatialMath:)GetYawPitchRollDegrees()(2)
+
+CalculateRotationDelta(CurrentRotation:(/Verse.org/SpatialMath:)rotation, TargetRotation:(/Verse.org/SpatialMath:)rotation)<transacts>:(/Verse.org/SpatialMath:)rotation =
+    InverseStart := FromRotation(CurrentRotation.Invert())
+    DeltaRotation := FromRotation(TargetRotation).RotateBy(InverseStart)
+    DeltaRotation.Convert()
+
+(Vector : (/Verse.org/SpatialMath:)vector3).RotateVerseVector(Rotation : (/Verse.org/SpatialMath:)rotation) : (/Verse.org/SpatialMath:)vector3 =
+    Rotation.Convert().RotateVector(Vector.Convert()).Convert()
