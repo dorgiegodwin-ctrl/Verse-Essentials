@@ -26,7 +26,7 @@ game_manager_component <public> := class <final_super> (component):
 
     #Perfect place to store vars and data that will need to be accessed everywhere
 
-    var Tickrate : float = 0.0 # Updated when the tickrate checker function is used
+    var Tickrate : float = 0.0 # Used by the tickrate checker function
     var SimEntity : entity = entity{} # Good to store sim entity here to help prevent constant lookups and potential failiures
 
     # I've Included two devices in here as an example of how useful this comp is for bridging the gap between fort devices and scene graph
