@@ -1,1 +1,18 @@
 
+<# An incredibly basic component intened to be added to oneshot entities that for example may spawn a single wave of vfx or a single sound. 
+The point of this comp is to keep your sessions clean by automatically disposing of unused entities after a period of time #>
+
+self_destruction_component <public> := class <final_super> (component):
+
+    @editable var AliveTime : float = 1.0
+
+    OnBeginSimulation<override>():void =
+        (super:)OnBeginSimulation()
+        spawn. BeginSelfDestructCountdown()
+
+    BeginSelfDestructCountdown() <suspends> : void =
+        loop:
+            Sleep(0.1)
+            set AliveTime -= 0.1
+            if. AliveTime <= 0.0 then. break
+        Entity.RemoveFromParent()
