@@ -1,5 +1,6 @@
 <# This function attempts to find the game manager
-BE WARNED: THIS FUNCTION IS MORE UNRELIABLE AND LESS PERFORMANT THAN SIMPLY PASSING THE GAME MANAGER INTO ANY COMPONENT THAT NEEDS TO REF IT #>
+BE WARNED: THIS FUNCTION IS MORE UNRELIABLE AND LESS PERFORMANT THAN SIMPLY PASSING THE GAME MANAGER INTO ANY COMPONENT THAT NEEDS TO REF IT
+I don't really use this function anymore so it may be outdated/not take advantage of some of my helper functions #>
 (Entity : entity).GetGameManager() <transacts> <decides> : game_manager_component =
 
     var ReturningComp : game_manager_component = game_manager_component{Entity := entity{}}
