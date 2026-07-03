@@ -1,1 +1,94 @@
+<# This function attempts to find the game manager
+BE WARNED: THIS FUNCTION IS MORE UNRELIABLE AND LESS PERFORMANT THAN SIMPLY PASSING THE GAME MANAGER INTO ANY COMPONENT THAT NEEDS TO REF IT #>
+(Entity : entity).GetGameManager() <transacts> <decides> : game_manager_component =
 
+    var ReturningComp : game_manager_component = game_manager_component{Entity := entity{}}
+
+    if. SimEntity := Entity.GetSimulationEntity[] then:
+        RefEntities := SimEntity.FindDescendantEntitiesWithComponent(game_manager_component)
+        for. RefEntity : RefEntities do:
+            RefComps := RefEntity.FindDescendantComponents(game_manager_component)
+            for. RefComp : RefComps do:
+                set ReturningComp = RefComp
+
+    return ReturningComp
+
+<#
+IMPORTANT: THERE SHOULD BE ONLY ONE GAME MANAGER COMPONENT PER PROJECT
+
+The game manager component acts as a sort of 'singleton' and is a must have in all scene graph projects. Whether for storing vars or setting up game mechanics/tracking timers - it's needed.
+The game manager component is intended to run with the player component so there are some dependencies in the given code on the player comp that can be removed if needed.
+#>
+
+game_manager_component <public> := class <final_super> (component):
+
+    Prop : creative_prop = creative_prop{}
+
+    #Perfect place to store vars and data that will need to be accessed everywhere
+
+    var Tickrate : float = 0.0 # Updated when the tickrate checker function is used
+    var SimEntity : entity = entity{} # Good to store sim entity here to help prevent constant lookups and potential failiures
+
+    # I've Included two devices in here as an example of how useful this comp is for bridging the gap between fort devices and scene graph
+    @editable ElimManager : elimination_manager_device = elimination_manager_device{} 
+    @editable PickaxeInput : input_trigger_device = input_trigger_device{}
+
+    TickrateChecker () <suspends> : void =
+        loop:
+            var TickCount : int = 0
+            race:
+                Sleep(1.0)
+                loop:
+                    Sleep(0.0)
+                    set TickCount += 1
+            set Tickrate = 1.0 / (TickCount * 1.0)
+            Print("TPS: {TickCount}")
+
+    OnBeginSimulation<override>():void =
+
+        (super:) OnBeginSimulation()
+
+        <# Setting up the game manager
+        if you want to trigger the tickrate checker, do it here
+        spawn. TickrateChecker()#>
+
+        PickaxeInput.PressedEvent.Subscribe(FlashlightInput)
+        ElimManager.EliminatedEvent.Subscribe(HandleElimination)
+
+        if. SimulationEntity := Entity.GetSimulationEntity[] then. set SimEntity = SimulationEntity
+
+        # Awaits round start for the next logic
+
+        if. FortRoundManager := Entity.GetFortRoundManager[] then: 
+            FortRoundManager.SubscribeRoundStarted(RoundStarted)
+
+    # Fires when the round starts
+    RoundStarted () : void =
+        for (Player : Prop.GetPlayspace().GetPlayers()):
+            spawn. InitPlayer(Player)
+        Prop.GetPlayspace().PlayerAddedEvent().Subscribe(PreInit)
+
+    PreInit (Player : player) : void =
+        spawn. InitPlayer(Player)
+
+    InitPlayer (Player : player) <suspends> : void =
+        if. FC := Player.GetFortCharacter[] then. if. FCEntity := FC.GetEntity[] then:
+            PlayerComp := player_component{Entity := entity{}}
+            FCEntity.AddComponents(array. PlayerComp)    
+            PlayerComp.UpdatePlayerReference(Player)
+            PlayerComp.UpdateGameManagerReference(Self)
+
+    # Fires when a plyer dies. NOTE: REQUIRES YOU TO CONNECT THE @EDITABLE DEVICE TO THE DEVICE YOU WANT LIKE NORMAL
+    HandleElimination (Agent : agent) : void =
+        Print("Uh oh, a player died")
+        <# Put your logic here for when a player died if you want
+        You can even access their player_component here: #>
+        if:
+            FC := Agent.GetFortCharacter[]
+            FCEntity := FC.GetEntity[]
+            PlayerComp := FCEntity.GetFirstComp[player_component]
+        then:
+
+    # Fires when a player presses the 'pickaxe' input. NOTE: REQUIRES YOU TO CONNECT THE @EDITABLE DEVICE TO THE DEVICE YOU WANT LIKE NORMAL
+    PickaxeInput (Agent : agent) : void =
+        Print("Pickaxe goes swing :)")
