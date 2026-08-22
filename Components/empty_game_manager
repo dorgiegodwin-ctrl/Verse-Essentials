@@ -1,0 +1,23 @@
+game_manager_component <public> := class <final_super> (component):
+
+    Prop : creative_prop = creative_prop{}
+
+
+    OnBeginSimulation<override>():void =
+
+        (super:)OnBeginSimulation()
+
+        if. FortRoundManager := Entity.GetFortRoundManager[] then: 
+            FortRoundManager.SubscribeRoundStarted(RoundStarted)
+
+    RoundStarted () : void =
+        for (Player : Prop.GetPlayspace().GetPlayers()):
+            InitPlayer(Player)
+        Prop.GetPlayspace().PlayerAddedEvent().Subscribe(InitPlayer)
+
+
+    InitPlayer (Player : player) : void =
+        if. FC := Player.GetFortCharacter[] then. if. FCEntity := FC.GetEntity[] then:
+            PlayerComp := player_component{Entity := entity{}}
+            FCEntity.AddComponents(array. PlayerComp)    
+            PlayerComp.UpdatePlayerReference(Player)
