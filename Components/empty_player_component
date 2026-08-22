@@ -1,0 +1,17 @@
+player_component <public> := class <final_super> (component):
+
+    var PlayerReference : ?player = false
+
+    UpdatePlayerReference (Player : player) : void =
+        set PlayerReference = option{Player}
+
+
+    GetPlayer () <transacts> : ?player =
+        return PlayerReference
+
+    OnBeginSimulation <override> () : void =
+        (super:)OnBeginSimulation()
+        Init()
+
+    Init () : void =
+        return
