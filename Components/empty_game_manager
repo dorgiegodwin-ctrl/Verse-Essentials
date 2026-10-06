@@ -1,3 +1,11 @@
+using. /Verse.org
+using. /Verse.org/Simulation
+using. /Verse.org/SceneGraph
+using. /Fortnite.com/Devices
+using. /Fortnite.com/Game
+using. /Fortnite.com/Characters
+using. /Fortnite.com/Playspaces
+
 
 game_manager_component <public> := class <final_super> (component):
 
@@ -12,7 +20,7 @@ game_manager_component <public> := class <final_super> (component):
             FortRoundManager.SubscribeRoundStarted(RoundStarted)
 
     RoundStarted () : void =
-        for (Player : Prop.GetPlayspace().GetPlayers()):
+        if. Playspace := Entity.GetPlayspaceForEntity[] then. for(Player : Playspace.GetPlayers()):
             InitPlayer(Player)
         Prop.GetPlayspace().PlayerAddedEvent().Subscribe(InitPlayer)
 
