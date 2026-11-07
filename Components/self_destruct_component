@@ -6,13 +6,7 @@ self_destruction_component <public> := class <final_super> (component):
 
     @editable var AliveTime : float = 1.0
 
-    OnBeginSimulation<override>():void =
-        (super:)OnBeginSimulation()
-        spawn. BeginSelfDestructCountdown()
-
-    BeginSelfDestructCountdown() <suspends> : void =
-        loop:
-            Sleep(0.1)
-            set AliveTime -= 0.1
-            if. AliveTime <= 0.0 then. break
+    OnSimulate <override> ()<suspends> : void =
+        (super:)OnSimulate()
+        Sleep(AliveTime)
         Entity.RemoveFromParent()
