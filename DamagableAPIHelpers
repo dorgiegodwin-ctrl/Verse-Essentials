@@ -1,0 +1,8 @@
+(HealthComp : health_component).GetHealth() <transacts> <decides> : float =
+    HealthComp.HealthPools[0].CurrentValue
+
+(HealthComp : health_component).GetMaxHealth() <transacts> <decides> : float =
+    HealthComp.HealthPools[0].MaxValue
+
+(HealthComp : health_component).GetHealthDelta() <transacts> <decides> : float =
+    HealthComp.HealthPools[0].CurrentValue / HealthComp.HealthPools[0].MaxValue 
