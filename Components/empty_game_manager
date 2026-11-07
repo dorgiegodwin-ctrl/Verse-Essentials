@@ -9,9 +9,6 @@ using. /Fortnite.com/Playspaces
 
 game_manager_component <public> := class <final_super> (component):
 
-    Prop : creative_prop = creative_prop{}
-
-
     OnBeginSimulation<override>():void =
 
         (super:)OnBeginSimulation()
@@ -20,10 +17,10 @@ game_manager_component <public> := class <final_super> (component):
             FortRoundManager.SubscribeRoundStarted(RoundStarted)
 
     RoundStarted () : void =
-        if. Playspace := Entity.GetPlayspaceForEntity[] then. for(Player : Playspace.GetPlayers()):
-            InitPlayer(Player)
-        Prop.GetPlayspace().PlayerAddedEvent().Subscribe(InitPlayer)
-
+        if. Playspace := Entity.GetPlayspaceForEntity[] then: 
+            for(Player : Playspace.GetPlayers()):
+                InitPlayer(Player)
+            Playspace.PlayerAddedEvent().Subscribe(InitPlayer)
 
     InitPlayer (Player : player) : void =
         if: 
