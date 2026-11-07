@@ -1,0 +1,14 @@
+(InEntity : entity).GetFirstTaggedEntity (tag_type : castable_subtype(tag)) <transacts> <decides> : entity =
+    (for (Tag : InEntity.FindDescendantEntitiesWithTag(tag_type)){Tag})[0]
+
+(InEntity : entity).GetFirstElderTaggedEntity (tag_type : castable_subtype(tag)) <transacts> <decides> : entity =
+    (for (Tag : InEntity.FindAncestorEntitiesWithTag(tag_type)){Tag})[0]
+
+(InEntity : entity).GetFirstComp(component_type:castable_subtype(component)) <transacts> <decides> : component_type =
+    (for (I : InEntity.FindDescendantComponents(component_type)){ I })[0]
+
+(InEntity : entity).GetFirstElderComp (component_type : castable_subtype(component)) <transacts> <decides> : component_type =
+    (for (Comp : InEntity.FindAncestorComponents(component_type)){Comp})[0]
+
+(InEntity : entity).GetFirstEntityWithComp(component_type:castable_subtype(component)) <transacts> <decides> : entity =
+    (for (I : InEntity.FindDescendantEntitiesWithComponent(component_type)){ I })[0]
