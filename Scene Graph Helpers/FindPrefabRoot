@@ -1,0 +1,18 @@
+# Technical tags
+prefab_root_tag <public> := class(tag){}
+
+FindPrefabRoot(InEntity : entity)<transacts>:?entity =
+    var CurrentEntity : entity = InEntity
+    var FoundRoot : ?entity = false
+
+    loop:
+        if (CurrentEntity.ContainsTag[prefab_root_tag]):
+            set FoundRoot = option{CurrentEntity}
+            break
+
+        if (ParentEntity := CurrentEntity.GetParent[]):
+            set CurrentEntity = ParentEntity
+        else:
+            break
+
+    FoundRoot
